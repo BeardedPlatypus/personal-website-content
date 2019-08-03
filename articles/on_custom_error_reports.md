@@ -75,9 +75,11 @@ In order to execute this script, a build step is added to the configuration:
    report. Press the *Edit Configuration Settings* link in the top right corner
    next to the *run* and *actions* button. From here, select the *Build Steps*
    link on the left hand side of the screen.
+   
 2. We are presented with several buttons that allow us to modify our build
    configuration. We want to press *Add build step* to create our new build
    step at the end of our configuration. 
+   
 3. You are presented with a wizard to set up your build step. In our case, we
    want to execute a python script, which we will do from the Command Line, 
    thus we select *Command Line* as our runner type, did not see that coming
@@ -95,22 +97,19 @@ In order to execute this script, a build step is added to the configuration:
    to execute your command line script. 
    
 7. We can also leave the *Custom script* bit, and move on to filling in the
-   build script content.
-   
+   build script content.  
    On our build server we have installed `conda`, which we will use to quickly
    generate a python3 environemnt, which we will use to execute the script.
    Then we will run the script, and finally we will remove the environment 
-   again, because it is always good to clean up after yourself.
-   
-   This leads to the following script:
+   again, because it is always good to clean up after yourself.  
+   This leads to the following script:  
    ```
    CALL conda create -y -n <someEnvName> python=3.5
    CALL activate <someEnvName>
    CALL python "path/to/your/script.py" [withOptionalArguments]
    CALL deactivate
    CALL conda remove -y -n <someEnvName> --all
-   ```
-   
+   ```  
    Of course, you want to replace `<someEnvName>` with your actual environment
    name, and the python call with the one that actually executes your script.
    
@@ -127,20 +126,16 @@ folder. We will have to add them to our artifacts.
    buttons.
 2. On the page that opens there should be an *Artifact paths* section. We can 
    add the path to our report here, such that it gets released as an artifact.
-   The given path should be relative to the check-out folder. 
-   
+   The given path should be relative to the check-out folder.  
    In our case, the report is made in an *Artifacts* folder, and is called
    *dia_report.zip* (naming has never been one of my strong suits). Thus our
-   artifact becomes. 
-   
+   artifact becomes.  
    ```
    Artifacts\dia_report.zip
-   ```
-   
+   ```  
    If you already have a run that produced the report, you can also press the
    little tree button next to the text field, to select it, producing the 
-   correct path.
-   
+   correct path.  
    With that done, you should see your report in the next run as an artifact.
 
 ## Adding a custom build report
