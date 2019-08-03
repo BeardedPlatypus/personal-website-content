@@ -37,7 +37,6 @@ custom reports, hence this article.
 
 # Bring out the custom reports!
 
-
 ## What do we need?
 
 A custom report is basically an additional tab, in which we can display 
@@ -45,7 +44,7 @@ additional information, which is produced as part of our build procedure. This
 can be anything, really. It can be used to track performance times, it can be 
 used to build a custom coverage tool. All we need to add this custom report to
 our TeamCity configuration, is an html file. This html file will be hosted in
-the TeamCity report tab, [see][https://confluence.jetbrains.com/display/TCD10/Including+Third-Party+Reports+in+the+Build+Results].
+the TeamCity report tab, [see this documentation](https://confluence.jetbrains.com/display/TCD10/Including+Third-Party+Reports+in+the+Build+Results).
 You can even put your html file in an archive like zip, and just refer to it.
 Something we will do. 
 
@@ -72,46 +71,47 @@ file into a single zip, for easy download.
 In order to execute this script, a build step is added to the configuration: 
 
 1. First navigate to the build configuration, in which we want to produce the
-   report. Press the *Edit Configuration Settings* link in the top right corner
-   next to the *run* and *actions* button. From here, select the *Build Steps*
-   link on the left hand side of the screen.
+     report. Press the *Edit Configuration Settings* link in the top right corner
+     next to the *run* and *actions* button. From here, select the *Build Steps*
+     link on the left hand side of the screen.
    
 2. We are presented with several buttons that allow us to modify our build
-   configuration. We want to press *Add build step* to create our new build
-   step at the end of our configuration. 
+     configuration. We want to press *Add build step* to create our new build
+     step at the end of our configuration. 
    
 3. You are presented with a wizard to set up your build step. In our case, we
-   want to execute a python script, which we will do from the Command Line, 
-   thus we select *Command Line* as our runner type, did not see that coming
-   did you? 
+     want to execute a python script, which we will do from the Command Line, 
+     thus we select *Command Line* as our runner type, did not see that coming
+     did you? 
    
 4. Choose an appropriate *Step name*, this will show up in the build steps
-   page we were on earlier. 
+     page we were on earlier. 
    
 5. In our case we want to execute the python script regardless of whether the
-   test runs were successfull, so instead of *If all previous steps finished successfully*
-   we can select, *Even if some of the previous steps failed*.
-
+     test runs were successfull, so instead of *If all previous steps finished successfully*
+     we can select, *Even if some of the previous steps failed*.
+   
 6. We can leave the *Working Directory* empty if you are running from the
    check-out folder, otherwise you want to set the folder in which you want
    to execute your command line script. 
    
 7. We can also leave the *Custom script* bit, and move on to filling in the
-   build script content.  
-   On our build server we have installed `conda`, which we will use to quickly
-   generate a python3 environemnt, which we will use to execute the script.
-   Then we will run the script, and finally we will remove the environment 
-   again, because it is always good to clean up after yourself.  
-   This leads to the following script:  
-   ```
-   CALL conda create -y -n <someEnvName> python=3.5
-   CALL activate <someEnvName>
-   CALL python "path/to/your/script.py" [withOptionalArguments]
-   CALL deactivate
-   CALL conda remove -y -n <someEnvName> --all
-   ```  
-   Of course, you want to replace `<someEnvName>` with your actual environment
-   name, and the python call with the one that actually executes your script.
+     build script content.  
+   
+     On our build server we have installed `conda`, which we will use to quickly
+     generate a python3 environemnt, which we will use to execute the script.
+     Then we will run the script, and finally we will remove the environment 
+     again, because it is always good to clean up after yourself.  
+     This leads to the following script:  
+   
+     
+```powershell
+CALL conda create -y -n <someEnvName> python=3.5  
+CALL activate <someEnvName>  
+CALL python "path/to/your/script.py" [withOptionalArguments]  
+CALL deactivate  
+CALL conda remove -y -n <someEnvName> --all  
+```
    
 We now got our reporting tool set up, which will produce our output somewhere
 in our check-out folder (hopefully).
@@ -122,21 +122,25 @@ Assuming we have our reports being generated somewhere within the check-out
 folder. We will have to add them to our artifacts. 
 
 1. First navigate to the build configuration to which we want to add our report
-   tab. Then press *Edit Configuration Settings* next to the *Run* and *Actions*
-   buttons.
+     tab. Then press *Edit Configuration Settings* next to the *Run* and *Actions*
+     buttons.
+   
 2. On the page that opens there should be an *Artifact paths* section. We can 
-   add the path to our report here, such that it gets released as an artifact.
-   The given path should be relative to the check-out folder.  
-   In our case, the report is made in an *Artifacts* folder, and is called
-   *dia_report.zip* (naming has never been one of my strong suits). Thus our
-   artifact becomes.  
-   ```
-   Artifacts\dia_report.zip
-   ```  
-   If you already have a run that produced the report, you can also press the
-   little tree button next to the text field, to select it, producing the 
-   correct path.  
-   With that done, you should see your report in the next run as an artifact.
+     add the path to our report here, such that it gets released as an artifact.
+     The given path should be relative to the check-out folder.  
+     In our case, the report is made in an *Artifacts* folder, and is called
+     *dia_report.zip* (naming has never been one of my strong suits). Thus our
+     artifact becomes.  
+   
+     ```
+     Artifacts\dia_report.zip
+     ```  
+   
+     If you already have a run that produced the report, you can also press the
+     little tree button next to the text field, to select it, producing the 
+     correct path.  
+   
+    With that done, you should see your report in the next run as an artifact.
 
 ## Adding a custom build report
 
@@ -145,18 +149,21 @@ This is not done within the build configuration, something I found a bit counter
 intuitive, but instead should be done at the project root. 
 
 1. Navigate to the `<root project>` and select *Edit Project Settings* in the 
-   top right corner.
-2. Navigate to the *Report Tabs* page through the menu on your left hand side.
-3. There are two options, you can create a new project report tab, or a build
-   report tab. Project report tabs will show on the project, and use the 
-   artifacts produced by one of the build configurations within the project.
-   The build tab is what we want. It allows us to set a path to a report html.
-   Any build configuration that contains an html file within its artifacts at 
-   this specific path, will have this build tab.
+     top right corner.
    
-   As such, press the *Create new build report tab*
+2. Navigate to the *Report Tabs* page through the menu on your left hand side.
+   
+3. There are two options, you can create a new project report tab, or a build
+     report tab. Project report tabs will show on the project, and use the 
+     artifacts produced by one of the build configurations within the project.
+     The build tab is what we want. It allows us to set a path to a report html.
+     Any build configuration that contains an html file within its artifacts at 
+     this specific path, will have this build tab.
+   
+     As such, press the *Create new build report tab*
+   
 4. Now set the *Tab Title* and the *Start page* of your report html. 
-   Press save, and voila! We should have ourselves a custom report tab.
+     Press save, and voila! We should have ourselves a custom report tab.
 
 # Conclusion
 
