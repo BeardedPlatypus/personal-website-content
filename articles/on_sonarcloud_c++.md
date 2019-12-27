@@ -1,7 +1,7 @@
 title: SonarCloud: Static Code Analysis in a C++ project.
 date: 2019-12-27
 
-As part of my [pacman project](https://github.com/BeardedPlatypus/PacMan)'s Continuous Integration (CI), I have set up 
+As part of my pacman project's Continuous Integration (CI), I have set up 
 SonarCloud as a static code analysis tool. This was done to get a bit better
 insight in the state of my code base, as well as a way to get feedback and
 improve my C++ knowledge. Because this ended up being slightly more work than 
@@ -9,14 +9,15 @@ I initially had hoped, I will use this article to explain how I set up
 SonarCloud in conjunction with my pacman project. Hopefully this will both 
 serve as a reminder to myself and a simple tutorial for you.
 
-For a tl;dr, the DevOps pipeline that is set up can be found [here](https://github.com/BeardedPlatypus/PacMan/blob/7127d4b26988f3442b811a2225583e775bc7b0d9/sonarcloud-pipeline.yml).
+For a tl;dr, the DevOps pipeline that is set up can be found [here](https://github.com/BeardedPlatypus/PacMan/blob/7127d4b26988f3442b811a2225583e775bc7b0d9/sonarcloud-pipeline.yml). 
+The full pacman project can be found [here](https://github.com/BeardedPlatypus/PacMan).
 
 # Introduction
 
 ## Motivation
 
 At my current place of work, we use SonarQube to get insight in the quality of
-our code. It provides you with a simple, insightful dashboards that highlights
+our code. It provides a simple, insightful dashboard that highlights
 bugs, code smells, code coverage and duplication. This allows developers to 
 gain insight in the quality of the code they have committed. To me personally,
 I love the way certain bad habits get highlighted, and I get forced to fix 
@@ -27,7 +28,7 @@ in much the same way as I learn from ReSharper suggestions.
 
 At work, I was not involved in setting this tool up, so I did not have any 
 experience, before I set it up for this project. It turned out to be a bit more
-of a struggle than I would like to admit, hence this article.
+of a struggle than I would like to admit, so a write up was in order.
 
 ## Context
 
@@ -35,7 +36,7 @@ It might be useful to give a bit more context in how my project is currently
 set up. This could help evaluate whether the approach I took could be useful 
 for your project.
 
-My pacman clone is developed in (modern) C++, with the help of the SDL2 library
+My [pacman clone](https://github.com/BeardedPlatypus/PacMan) is developed in (modern) C++, with the help of the [SDL2 library](https://www.libsdl.org/download-2.0.php)
 for rendering the sprites. It is build with visual studio 2019 / MSBuild. 
 Testing is done with VSTest and the google test adapter. gtest and gmock are 
 used to write the unit tests. All of these libraries are installed through 
@@ -53,8 +54,8 @@ hosted on GitHub, since I use that as my portfolio.
 
 I am going to assume that the you have set up the following accounts:
 
-* SonarCloud: https://sonarcloud.io/
-* Azure DevOps: https://azure.microsoft.com/en-us/services/devops/
+* [SonarCloud](https://sonarcloud.io/)
+* [Azure DevOps](https://azure.microsoft.com/en-us/services/devops/)
 * A online repository, from a service like Azure Repos, GitHub, GitLab, 
   BitBucket etc.
 
@@ -70,7 +71,7 @@ these steps. If you find something that works better, by all means go for it!
 
 I started off by following the basic SonarCloud / Azure DevOps tutorial found
 [here](https://docs.microsoft.com/en-us/labs/devops/sonarcloudlab/index).
-However, I ran into some problems due to the fact I am using C++. So the 
+However, I ran into some problems due to using C++ instead of C#. So the 
 following text will be significantly inspired by the previously mentioned 
 tutorial, however, it is adapted to how I got it to work with C++.
 
@@ -108,12 +109,15 @@ replaced it with the basic build steps for building my pacman application:
 
 SonarCloud will analyse your solution by applying various metrics to
 find problems with your code. It does so by static analysis, and it
-will gather data while you compile your program. In order to do so
-we need to first configure SonarCloud to analyse our compile process.
-Then, we need to compile our program. The results of this can then be
-used by SonarCloud to analyse our project. Finally, the results of the
-analysis need to be pushed to the SonarCloud server, such that they become
-available in our SonarCloud dashboard.
+will gather the necessary data to do this while you compile your program. 
+
+So in order to get our analysis up and running we need to take the following 
+steps:
+
+* First we need to configure SonarCloud to analyse our compile process.
+* Then we need to compile our solution.
+* Next we need SonarCloud to analyse the results of compiling our program.
+* Finally, the results of the analysis need to be pushed to the SonarCloud server, such that they become available in the SonarCloud dashboard.
 
 This means we will have to add the following three tasks to our pipeline:
 
@@ -178,8 +182,8 @@ sake of simplicity I have set my "Project Version" to 1.0, though you can
 set this to the respective version of your software, and it will be displayed
 correctly in your project dashboard.
 
-Finally press add, to add this task to your pipeline yaml. It should be 
-before the actual VSBuild step.
+Finally press add, to add this task to your pipeline yaml. Make sure it gets
+placed before the build task.
 
 ### SonarCloud Analyse and Publish
 
@@ -196,7 +200,9 @@ The pipeline will now look like this:
 
 In an ideal world, this should be enough to get SonarCloud to work. 
 Unfortunately, this being a C/C++ project, we need to do some additional 
-work. When this pipeline is run it gives an error containing the following
+work. 
+
+When this pipeline is run it gives an error containing the following
 statement:
 
 <script src="https://gist.github.com/BeardedPlatypus/2a9b78e380a6fbe37c42eac36ce34d57.js"></script>
@@ -212,21 +218,17 @@ Either way, after obtaining it you should have a path to the executable. For
 the sake of convenience let's wrap this in a variable, add the following line
 to your variables section of your yaml:
 
-```yml
-  buildWrapperExe: '$(Build.SourcesDirectory)/tools/build-wrapper-win-x86-64.exe'
-```
+<script src="https://gist.github.com/BeardedPlatypus/a91cca95daf675a5f2a87c5f79774795.js"></script>
 
 We can also add our future output directory, as mentioned in the error message,
 as a variable, such that we only have to define it once:
 
-```yml
-  buildWrapperOutputDir: '$(Build.SourcesDirectory)/build_wrapper_output_directory'
-```
+<script src="https://gist.github.com/BeardedPlatypus/95ac4f7c86a011a40516c8cc11a9e3c2.js"></script>
 
-With that out of the way, the next step is to modify our `VSBuild` step. Unfortunately
+With that out of the way, the next step is to modify our `VSBuild` step. Unfortunately,
 our regular `VSBuild` step does not have a way to wrap it in our build wrapper, or 
 I have not found a way to do this. Instead, I have changed the `VSBuild` task to 
-a power shell task, and defined the command myself. It is not pretty but it works.
+a power shell task, and defined the command myself. It is not pretty, but it works.
 
 The new command becomes:
 
@@ -246,9 +248,7 @@ the `SonarCloudAnalyze` step to pick up on our results, and actually produce
 the right results. We do this by adding the following line to the additional 
 properties of SonarCloud:
 
-```yml
-sonar.cfamily.build-wrapper-output=$(buildWrapperOutputDir)
-```
+<script src="https://gist.github.com/BeardedPlatypus/6a069c0f47ef664cfd45e2bfc5633f0c.js"></script>
 
 Lastly, I have set up my SonarCloud pipeline to run once every three hours if
 a commit has taken place. This will ensure I am not running my pipeline 
@@ -274,9 +274,8 @@ The last metric to set up within SonarCloud is the code coverage. I will not go
 into detail about how to unit test, or why it is a good thing, enough articles
 are written on these topics already, but I will add that if you are not writing
 unit tests, I wholeheartedly encourage you to start doing so. If you are not
-interested in the code coverage, you already got everything set up to start
-using SonarCloud to start improving the code smells, and you can freely skip
-this section.
+interested in the code coverage, then this is all you need to do to start using
+SonarCloud, and I wish you happy code smell hunting!
 
 Within SonarCloud we can display the code coverage metric. Once set up, 
 SonarCloud will show you the overall code coverage of your solution, as well as
@@ -291,7 +290,7 @@ the VSTest task on Azure Pipelines, you can enable measuring code coverage.
 This will add a `.coverage` file somewhere on your agent. You could use this
 `.coverage` file within visual studio to show the uncovered pieces of code.
 With a bit of tweaking, we can also use this data within SonarCloud.
-Unfortunately however, the `.coverage` file is not supported out of the box,
+However, the `.coverage` file is not supported out of the box,
 and we will need to export it to an `.xml` file, before it will play nice.
 
 ### Producing a .coverage file
@@ -309,16 +308,16 @@ VSTest itself. With that out of the way, let's set up the `.coverage` file.
 
 We can enable the code coverage by adding the following option to our VSTest task:
 
-```yml
-codeCoverageEnabled: true
-```
+<script src="https://gist.github.com/BeardedPlatypus/3a2a51925a819794c96d863dea87bc21.js"></script>
 
-This will ensure our `.coverage` file gets produced. With the current iteration
+This will ensure our `.coverage` file gets produced. 
+
+With the current iteration
 of the VSTest task this file will be placed in the test results folder, located
 in the TEMP folder of the Azure Agent. This location has changed in between
 versions of the VSTest task already, therefor it would not necessarily be smart
 to rely on an absolute path. Instead, we will configure our VSTest task to output
-the `.coverage` file in a specific location. To do so we need to create a 
+the `.coverage` file in a specific location. To do so, we need to create a 
 `.runsettings` that specifies the output location, as shown below:
 
 <script src="https://gist.github.com/BeardedPlatypus/7bfdab6e73c1fc3718ee20fce9a6841f.js"></script>
@@ -355,7 +354,7 @@ subsequent steps.
 Finally, we need to modify our VSTest task slightly to make use of our generated
 `.runsettings` file. As part of the `inputs` of the VSTest add the following line:
 
-```runSettingsFile: '$(codeCoverageLocationRunsettings)'```
+<script src="https://gist.github.com/BeardedPlatypus/7f43ff99a44380aed360163bd7106a24.js"></script>
 
 This will ensure that the `.coverage` files are generated in `testResults`.
 
@@ -429,7 +428,7 @@ look at how we can convert `.coverage` files in to something usable by SonarClou
 If my understanding is correct, the `.coverage` is basically a binary blob of
 code coverage information, which can be used by Visual Studio to give you an
 indication of your code coverage. Unfortunately, it does not work out of the 
-box for SonarCloud. This means we need to convert it to an `.xml` file that is
+box for SonarCloud. This means we need to convert it to an `.xml` file which will be
 usable. There are various ways of doing this, but the easiest I have found is 
 to use the `codecoverage.exe` provided with Visual Studio Enterprise, i.e. the
 Visual Studio version that is installed on the Azure agents.
@@ -470,15 +469,11 @@ The final step to wrap up our SonarCloud setup, is to use the newly generated
 `.xml` files within our analyses. For this we need to add one more line to our
 `extraProperties`:
 
-```yml
-sonar.cfamily.vscoveragexml.reportsPath=$(coverageFiles)
-```
+<script src="https://gist.github.com/BeardedPlatypus/56f930fe91c676045407cf2d582eb8b2.js"></script>
 
 Where `coverageFiles` is defined as:
 
-```yml
-coverageFiles: '$(coverageOutputLocation)\*.xml'
-```
+<script src="https://gist.github.com/BeardedPlatypus/0ceefdd5f9319e395ef41c608a5f9ef4.js"></script>
 
 Which says all the `.xml` files within the location where we generated our `.xml`
 files. This should ensure that SonarCloud takes into account the code coverage,
