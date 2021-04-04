@@ -1,7 +1,8 @@
-title: Learning Unity: Rendering a simple 2D grid as first steps to understanding the geometry shader.
+title: Learning Unity: Rendering a simple 2D with the geometry shader.
 date: 2021-04-03
 
-*Most of the information of this post has been obtained from [this tutorial](https://jayjingyuliu.wordpress.com/2018/01/24/unity3d-intro-to-geometry-shader/), do check it out!*
+Within this post, we will take a look at geometry shaders within Unity, in
+particular how to utilise it to render simple 2D grids in a 3D scene.
 
 Over the past few weeks I have slowly been getting my feet wet again with 
 Unity. I submitted an entry into the [Lego Ideas x Unity](https://ideas.lego.com/challenges/6811cf30-f944-4dfa-8714-9b38be6fbb52?query=&sort=top) 
@@ -15,7 +16,7 @@ short write-up of the results, and how they were achieved.
 As I am a firm believer in showing the results first and then expanding upon
 how it was achieved, this is the final result:
 
-<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/final.png?raw=true' width='75%'></p>
+<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/final.png?raw=true' width='100%'></p>
 
 As you can see we have a simple 2D grid consisting of lines and points. The
 size of these lines and points can be adjusted through the shader. The 
@@ -29,6 +30,8 @@ scene consists of three steps:
 The following sections will drill down further on these topics. Do note that
 I am a complete beginner when it comes to Unity, and as such, anything written
 here might not be the ideal solution to the problem, always be critical!
+
+*Most of the information of this post has been obtained from [this tutorial](https://jayjingyuliu.wordpress.com/2018/01/24/unity3d-intro-to-geometry-shader/), do check it out!*
 
 ## Set up an empty scene with a simple rotating camera.
 
@@ -47,7 +50,9 @@ of least resistance to me.
 
 The script has the following content:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/1d6e286997a09c9d59e367bd8791cb42.js"></script>
+</div>
 
 As you can see it is rather trivial. Within the update script we update the 
 rotation of the transform of the object is attached to and rotate it around
@@ -88,7 +93,9 @@ let's move to your favourite IDE and get coding.
 
 First we provide some fields which can be customised in the editor:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/4da98624980b704239db00a7e19e070a.js"></script>
+</div>
 
 * Shader: The shader to render the geometry with
 * Total Width: the total width of our plane
@@ -100,7 +107,9 @@ First we provide some fields which can be customised in the editor:
 Next we will create the necessary components on our game object when starting
 the player:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/408e3dda00b7a51d5f3eb7bd1102686e.js"></script>
+</div>
 
 * A mesh renderer linking to our selected shader
 * A Mesh filter containing our mesh
@@ -118,11 +127,13 @@ set with the `SetIndices` method, and specified as being `MeshTopology.Lines`.
 This will ensure that in our shader the lines are interpreted as lines, and not
 triangles.
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/663fd5bb130979ed04568102c301d504.js"></script>
+</div>
 
 When rendered with a default unlit shader, this has the following result:
 
-<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/lines.png?raw=true' width='75%'></p>
+<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/lines.png?raw=true' width='100%'></p>
 
 The full script can be found [here](https://gist.github.com/BeardedPlatypus/14ef94e2cf5a7adb2dc7ddb9c76e42e8)
 
@@ -145,12 +156,16 @@ changes to the default unlit shader:
 
 This should lead to code similar to the following:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/69fd0926c005ba95297780f9cfc3f0fa.js"></script>
+</div>
 
 Before discuss how to generate lines with width, let's first look at the 
 declaration of the geometry shader:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/69a9399f4c29d17459dbec37d5e9532f.js"></script>
+</div>
 
 The `geom` is defined by the pragma we added at the beginning of the shader. 
 Next we indicate that the geometry shader will receive line primitives 
@@ -173,18 +188,26 @@ of the quad we can adopt the following strategy given the following points:
 
 This is illustrated in the following figure:
 
+<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/lines_illustration.png?raw=true' width='100%'></p>
+
 Rotating a vector (x, y) by 90 degrees, corresponds with the vector (y, - x). 
 We can define the direction of the line and the corresponding offset as
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/337ed23961bf7cae5473500c94f83776.js"></script>
+</div>
 
 Next we can define the four new vertices as follows:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/63903e04278ed419d1d552d52a38ed79.js"></script>
+</div>
 
 With the vertices of a line defined, we can generate the two triangles, as shown in the figure:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/ec39ef3001d562286a1e38ec9e97a176.js"></script>
+</div>
 
 You see that we generate two triangles, each closed with a `RestartStrip` call. 
 Further note that the order of the vertices is important. If the wrong order is
@@ -195,7 +218,7 @@ want to flip the order of vertices (switch the first and third vertices).
 
 When finished you should see the following when starting the game:
 
-<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/lines_with_thickness.png?raw=true' width='75%'></p>
+<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/lines_with_thickness.png?raw=true' width='100%'></p>
 
 The full code for the shader can be found [here](https://gist.github.com/BeardedPlatypus/303b43347b271f44cd88526cf568cc9d)
 
@@ -238,7 +261,7 @@ code. Do note the `SetIndices` line though.
 If we temporarily disable the lines object, and create a new unlit shader, we
 should see the following:
 
-<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/points.png?raw=true' width='75%'></p>
+<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/points.png?raw=true' width='100%'></p>
 
 ### Turning the points into circles with a given radius
 
@@ -247,7 +270,9 @@ into circles. In order to do this, it is easiest to start with a copy of your
 lines shader and remove the content of the geometry function. Next we adjust
 the function declaration to the following:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/0d09f5282614ea8150beb20b5d12e6e2.js"></script>
+</div>
 
 As you can see, this time we use point primitives, which consist of only a single
 primitive.
@@ -272,9 +297,13 @@ by the index of the vertex times '360 degrees / n' around. Lastly, we can fill
 our circle by creating triangles from a single vertex, and walking over the 
 other vertices, as illustrated here:
 
+<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/points_illustration.png?raw=true' width='100%'></p>
+
 If we put this into code we will get the following:
 
+<div style="margin: 5px 0px 5px 0px;">
 <script src="https://gist.github.com/BeardedPlatypus/51444f0528f9b65ad4a00979d5497700.js"></script>
+</div>
 
 In tihs code snippet we first define our initial vertex, which will act as our 
 anchor for the triangle strip. Next we generate the other vertices, and append
@@ -285,7 +314,7 @@ y axis position of the grid lines.
 
 When set up correctly it should look like this:
 
-<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/circles.png?raw=true' width='75%'></p>
+<p align='center'><img align='center' src='https://github.com/BeardedPlatypus/media-storage/blob/main/blog/geometry-shader/circles.png?raw=true' width='100%'></p>
 
 When we enable the lines again, we get the result as shown at the beginning, 
 which completes our set up.
