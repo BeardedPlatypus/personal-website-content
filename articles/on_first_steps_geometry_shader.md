@@ -1,4 +1,4 @@
-title: Learning Unity: Rendering a simple 2D with the geometry shader.
+title: Learning Unity: Rendering a simple 2D grid with the geometry shader.
 date: 2021-04-03
 
 Within this post, we will take a look at geometry shaders within Unity, in
@@ -50,7 +50,7 @@ of least resistance to me.
 
 The script has the following content:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/1d6e286997a09c9d59e367bd8791cb42.js"></script>
 </div>
 
@@ -93,7 +93,7 @@ let's move to your favourite IDE and get coding.
 
 First we provide some fields which can be customised in the editor:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/4da98624980b704239db00a7e19e070a.js"></script>
 </div>
 
@@ -107,7 +107,7 @@ First we provide some fields which can be customised in the editor:
 Next we will create the necessary components on our game object when starting
 the player:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/408e3dda00b7a51d5f3eb7bd1102686e.js"></script>
 </div>
 
@@ -127,7 +127,7 @@ set with the `SetIndices` method, and specified as being `MeshTopology.Lines`.
 This will ensure that in our shader the lines are interpreted as lines, and not
 triangles.
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/663fd5bb130979ed04568102c301d504.js"></script>
 </div>
 
@@ -156,14 +156,14 @@ changes to the default unlit shader:
 
 This should lead to code similar to the following:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/69fd0926c005ba95297780f9cfc3f0fa.js"></script>
 </div>
 
 Before discuss how to generate lines with width, let's first look at the 
 declaration of the geometry shader:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/69a9399f4c29d17459dbec37d5e9532f.js"></script>
 </div>
 
@@ -193,19 +193,19 @@ This is illustrated in the following figure:
 Rotating a vector (x, y) by 90 degrees, corresponds with the vector (y, - x). 
 We can define the direction of the line and the corresponding offset as
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/337ed23961bf7cae5473500c94f83776.js"></script>
 </div>
 
 Next we can define the four new vertices as follows:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/63903e04278ed419d1d552d52a38ed79.js"></script>
 </div>
 
 With the vertices of a line defined, we can generate the two triangles, as shown in the figure:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/ec39ef3001d562286a1e38ec9e97a176.js"></script>
 </div>
 
@@ -270,7 +270,7 @@ into circles. In order to do this, it is easiest to start with a copy of your
 lines shader and remove the content of the geometry function. Next we adjust
 the function declaration to the following:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/0d09f5282614ea8150beb20b5d12e6e2.js"></script>
 </div>
 
@@ -301,7 +301,7 @@ other vertices, as illustrated here:
 
 If we put this into code we will get the following:
 
-<div style="margin: 5px 0px 5px 0px;">
+<div style="margin: 2em 0em 2em 0em;">
 <script src="https://gist.github.com/BeardedPlatypus/51444f0528f9b65ad4a00979d5497700.js"></script>
 </div>
 
